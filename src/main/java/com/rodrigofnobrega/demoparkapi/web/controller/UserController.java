@@ -5,10 +5,10 @@ import com.rodrigofnobrega.demoparkapi.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Objects;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @RestController
@@ -21,5 +21,17 @@ public class UserController {
         UserEntity userSaved = userService.save(user);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(user);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Object> getById(@PathVariable Long id) {
+        Optional<UserEntity> user  = userService.getById(id);
+
+        if (!user.isPresent()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuário não encontrado");
+
+        }
+
+        return  ResponseEntity.ok(user.get());
     }
 }

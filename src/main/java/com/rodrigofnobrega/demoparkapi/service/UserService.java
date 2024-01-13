@@ -23,4 +23,13 @@ public class UserService {
     public Optional<UserEntity> getById(Long id) {
         return userRepository.findById(id);
     }
+
+    @Transactional
+    public Optional<UserEntity> updatePassword(Long id, String password) {
+        Optional<UserEntity> user = getById(id);
+
+        user.ifPresent(userEntity -> userEntity.setPassword(password));
+
+        return user;
+    }
 }

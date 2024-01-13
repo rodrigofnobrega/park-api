@@ -1,0 +1,17 @@
+*** Na configuração do Locale ***
+
+Substitua as propriedades:
+
+spring.mvc.locale-resolver=fixed
+spring.mvc.locale=pt_BR
+
+Pela novas propriedades:
+
+spring.web.locale-resolver=fixed
+spring.web.locale=pt_BR
+
+As propriedades apresentadas em aula estão em processo de depreciação.
+Isso indica que em uma versão futura do Sprig Boot podem não estar mais
+disponíveis para o uso. Por isso, a substituição é indicada.
+
+

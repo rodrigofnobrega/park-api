@@ -7,6 +7,7 @@ import org.apache.catalina.User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -31,5 +32,10 @@ public class UserService {
         user.ifPresent(userEntity -> userEntity.setPassword(password));
 
         return user;
+    }
+
+    @Transactional
+    public List<UserEntity> getAllUsers() {
+        return userRepository.findAll();
     }
 }

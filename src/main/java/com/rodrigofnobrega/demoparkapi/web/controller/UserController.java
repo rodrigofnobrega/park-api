@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -31,9 +32,16 @@ public class UserController {
                 .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).body(HttpMessages.USUARIO_NAO_ENCONTRADO));
     }
 
+    @GetMapping
+    public ResponseEntity<List<UserEntity>> getAllUsers() {
+        List<UserEntity> users = userService.getAllUsers();
+
+        return  ResponseEntity.ok(users);
+    }
+
     @PatchMapping("/{id}")
     public ResponseEntity<Object> updatePassword(@PathVariable Long id, @RequestBody UserEntity userEntity) {
-        Optional<UserEntity> user  = userService.updatePassword(id, userEntity.getPassword());
+        Optional<UserEntity> user = userService.updatePassword(id, userEntity.getPassword());
 
         return user.<ResponseEntity<Object>>map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).body(HttpMessages.USUARIO_NAO_ENCONTRADO));

@@ -27,11 +27,8 @@ public class UserController {
     public ResponseEntity<Object> getById(@PathVariable Long id) {
         Optional<UserEntity> user  = userService.getById(id);
 
-        if (!user.isPresent()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuário não encontrado");
+        return user.<ResponseEntity<Object>>map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuário não encontrado"));
 
-        }
-
-        return  ResponseEntity.ok(user.get());
     }
 }

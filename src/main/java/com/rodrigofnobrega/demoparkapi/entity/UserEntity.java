@@ -28,7 +28,7 @@ public class UserEntity implements Serializable{
 
     @Enumerated(EnumType.STRING)
     @Column(name = "role", nullable = false, unique = false, length = 30)
-    private UserRoleEnum role;
+    private UserRoleEnum role = UserRoleEnum.ROLE_CLIENTE;
 
     @Column(name = "date_created")
     private LocalDateTime dateCreated;

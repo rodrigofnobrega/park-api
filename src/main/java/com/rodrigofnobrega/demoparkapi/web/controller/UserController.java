@@ -32,8 +32,11 @@ public class UserController {
     public ResponseEntity<Object> getById(@PathVariable Long id) {
         Optional<UserEntity> user  = userService.getById(id);
 
-        return user.<ResponseEntity<Object>>map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).body(EnumUtils.enumToString(HttpMessagesEnum.USUARIO_NAO_ENCONTRADO)));
+        if (user.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(EnumUtils.enumToString(HttpMessagesEnum.USUARIO_NAO_ENCONTRADO));
+        }
+
+        return ResponseEntity.status(HttpStatus.FOUND).body(UserMapper.toDto(user.get()));
     }
 
     @GetMapping

@@ -1,7 +1,8 @@
 package com.rodrigofnobrega.demoparkapi.web.controller;
 
 import com.rodrigofnobrega.demoparkapi.entity.UserEntity;
-import com.rodrigofnobrega.demoparkapi.enums.HttpMessages;
+import com.rodrigofnobrega.demoparkapi.enums.HttpMessagesEnum;
+import com.rodrigofnobrega.demoparkapi.enums.utils.EnumUtils;
 import com.rodrigofnobrega.demoparkapi.service.UserService;
 import com.rodrigofnobrega.demoparkapi.web.dto.UserCreateDto;
 import com.rodrigofnobrega.demoparkapi.web.dto.UserResponseDto;
@@ -32,7 +33,7 @@ public class UserController {
         Optional<UserEntity> user  = userService.getById(id);
 
         return user.<ResponseEntity<Object>>map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).body(HttpMessages.USUARIO_NAO_ENCONTRADO));
+                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).body(EnumUtils.enumToString(HttpMessagesEnum.USUARIO_NAO_ENCONTRADO)));
     }
 
     @GetMapping
@@ -47,6 +48,6 @@ public class UserController {
         Optional<UserEntity> user = userService.updatePassword(id, userEntity.getPassword());
 
         return user.<ResponseEntity<Object>>map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).body(HttpMessages.USUARIO_NAO_ENCONTRADO));
+                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).body(EnumUtils.enumToString(HttpMessagesEnum.USUARIO_NAO_ENCONTRADO)));
     }
 }

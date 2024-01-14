@@ -1,5 +1,5 @@
 package com.rodrigofnobrega.demoparkapi.enums;
 
-public enum HttpMessages {
+public enum HttpMessagesEnum {
     USUARIO_NAO_ENCONTRADO
 }

@@ -1,9 +1,10 @@
 package com.rodrigofnobrega.demoparkapi.service;
 
 import com.rodrigofnobrega.demoparkapi.entity.UserEntity;
+import com.rodrigofnobrega.demoparkapi.enums.HttpMessagesEnum;
+import com.rodrigofnobrega.demoparkapi.enums.utils.EnumUtils;
 import com.rodrigofnobrega.demoparkapi.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.apache.catalina.User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,10 +27,20 @@ public class UserService {
     }
 
     @Transactional
-    public Optional<UserEntity> updatePassword(Long id, String password) {
+    public Optional<UserEntity> updatePassword(Long id, String currentPassword, String newPassword, String confirmPassword) {
+        if (!newPassword.equals(confirmPassword)) {
+            throw new RuntimeException(EnumUtils.enumToString(HttpMessagesEnum.NOVA_SENHA_NAO_CONFERE_COM_CONFIRMACAO_DE_SENHA));
+        }
+
         Optional<UserEntity> user = getById(id);
 
-        user.ifPresent(userEntity -> userEntity.setPassword(password));
+        user.ifPresent(userEntity -> {
+            if (!user.get().getPassword().equals(currentPassword)) {
+                throw new RuntimeException(EnumUtils.enumToString(HttpMessagesEnum.SUA_SENHA_NAO_CONFERE));
+            }
+
+            user.get().setPassword(newPassword);
+        });
 
         return user;
     }

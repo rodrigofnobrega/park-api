@@ -5,6 +5,7 @@ import com.rodrigofnobrega.demoparkapi.enums.HttpMessagesEnum;
 import com.rodrigofnobrega.demoparkapi.enums.utils.EnumUtils;
 import com.rodrigofnobrega.demoparkapi.service.UserService;
 import com.rodrigofnobrega.demoparkapi.web.dto.UserCreateDto;
+import com.rodrigofnobrega.demoparkapi.web.dto.UserPasswordDto;
 import com.rodrigofnobrega.demoparkapi.web.dto.UserResponseDto;
 import com.rodrigofnobrega.demoparkapi.web.dto.mapper.UserMapper;
 import lombok.RequiredArgsConstructor;
@@ -47,10 +48,13 @@ public class UserController {
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<Object> updatePassword(@PathVariable Long id, @RequestBody UserEntity userEntity) {
-        Optional<UserEntity> user = userService.updatePassword(id, userEntity.getPassword());
+    public ResponseEntity<Void> updatePassword(@PathVariable Long id, @RequestBody UserPasswordDto userPasswordDto) {
+        Optional<UserEntity> user = userService.updatePassword(id, userPasswordDto.getCurrentPassword(), userPasswordDto.getNewPassword(), userPasswordDto.getConfirmPassword());
 
-        return user.<ResponseEntity<Object>>map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).body(EnumUtils.enumToString(HttpMessagesEnum.USUARIO_NAO_ENCONTRADO)));
+        if (user.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }

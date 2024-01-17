@@ -3,8 +3,10 @@ package com.rodrigofnobrega.demoparkapi.service;
 import com.rodrigofnobrega.demoparkapi.entity.UserEntity;
 import com.rodrigofnobrega.demoparkapi.enums.HttpMessagesEnum;
 import com.rodrigofnobrega.demoparkapi.enums.utils.EnumUtils;
+import com.rodrigofnobrega.demoparkapi.exception.UsernameUniqueViolationException;
 import com.rodrigofnobrega.demoparkapi.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,7 +20,11 @@ public class UserService {
 
     @Transactional
     public UserEntity save(UserEntity user) {
-        return userRepository.save(user);
+        try {
+            return userRepository.save(user);
+        } catch (DataIntegrityViolationException exception) {
+            throw new UsernameUniqueViolationException(String.format("Username {%s} já cadastrado", user.getUsername()));
+        }
     }
 
     @Transactional(readOnly = true)

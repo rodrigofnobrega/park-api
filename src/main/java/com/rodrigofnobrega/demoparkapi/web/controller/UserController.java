@@ -71,6 +71,12 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.FOUND).body(UserMapper.toDto(user.get()));
     }
 
+    @Operation(summary = "Buscar todos os usuários", description = "Recurso para buscar todos os usuários cadastrados",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Usuários encontrados com sucesso",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = UserResponseDto.class)))
+            })
     @GetMapping
     public ResponseEntity<List<UserResponseDto>> getAllUsers() {
         List<UserEntity> users = userService.getAllUsers();

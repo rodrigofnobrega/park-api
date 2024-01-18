@@ -2,6 +2,8 @@ package com.rodrigofnobrega.demoparkapi;
 
 import com.rodrigofnobrega.demoparkapi.web.dto.UserCreateDto;
 import com.rodrigofnobrega.demoparkapi.web.dto.UserResponseDto;
+import com.rodrigofnobrega.demoparkapi.web.exception.ErrorMessage;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -23,7 +25,7 @@ class UserIT {
 
 	@Test
 	public void createUser_WithUsernameAndPasswordValid_ReturnUserCreateWithStatus201() {
-		UserResponseDto responseDto = webTestClient
+		UserResponseDto responseBody = webTestClient
 				.post()
 				.uri(String.format("http://127.0.0.1:%d/api/v1/usuarios", port))
 				.contentType(MediaType.APPLICATION_JSON)
@@ -34,9 +36,119 @@ class UserIT {
 				.returnResult().getResponseBody();
 		
 
-		Assertions.assertThat(responseDto).isNotNull();
-		Assertions.assertThat(responseDto.getId()).isNotNull();
-		Assertions.assertThat(responseDto.getUsername()).isEqualTo("james@email.com");
-		Assertions.assertThat(responseDto.getRole()).isEqualTo("CLIENTE");
+		Assertions.assertThat(responseBody).isNotNull();
+		Assertions.assertThat(responseBody.getId()).isNotNull();
+		Assertions.assertThat(responseBody.getUsername()).isEqualTo("james@email.com");
+		Assertions.assertThat(responseBody.getRole()).isEqualTo("CLIENTE");
+	}
+	
+	@Test
+	public void createUser_WithUsernameInalid_ReturnErrorMessageStatus422() {
+		ErrorMessage responseBody = webTestClient
+				.post()
+				.uri(String.format("http://127.0.0.1:%d/api/v1/usuarios", port))
+				.contentType(MediaType.APPLICATION_JSON)
+				.bodyValue(new UserCreateDto("", "123456"))
+				.exchange()
+				.expectStatus().isEqualTo(422)
+				.expectBody(ErrorMessage.class)
+				.returnResult().getResponseBody();
+		
+		Assertions.assertThat(responseBody).isNotNull();
+		Assertions.assertThat(responseBody.getStatus()).isEqualTo(422);
+		
+		responseBody = webTestClient
+				.post()
+				.uri(String.format("http://127.0.0.1:%d/api/v1/usuarios", port))
+				.contentType(MediaType.APPLICATION_JSON)
+				.bodyValue(new UserCreateDto(" ", "123456"))
+				.exchange()
+				.expectStatus().isEqualTo(422)
+				.expectBody(ErrorMessage.class)
+				.returnResult().getResponseBody();
+		
+		Assertions.assertThat(responseBody).isNotNull();
+		Assertions.assertThat(responseBody.getStatus()).isEqualTo(422);
+		
+		responseBody = webTestClient
+				.post()
+				.uri(String.format("http://127.0.0.1:%d/api/v1/usuarios", port))
+				.contentType(MediaType.APPLICATION_JSON)
+				.bodyValue(new UserCreateDto("bob@", "123456"))
+				.exchange()
+				.expectStatus().isEqualTo(422)
+				.expectBody(ErrorMessage.class)
+				.returnResult().getResponseBody();
+		
+		Assertions.assertThat(responseBody).isNotNull();
+		Assertions.assertThat(responseBody.getStatus()).isEqualTo(422);
+		
+		responseBody = webTestClient
+				.post()
+				.uri(String.format("http://127.0.0.1:%d/api/v1/usuarios", port))
+				.contentType(MediaType.APPLICATION_JSON)
+				.bodyValue(new UserCreateDto("bob@email", "123456"))
+				.exchange()
+				.expectStatus().isEqualTo(422)
+				.expectBody(ErrorMessage.class)
+				.returnResult().getResponseBody();
+		
+		Assertions.assertThat(responseBody).isNotNull();
+		Assertions.assertThat(responseBody.getStatus()).isEqualTo(422);
+		
+		responseBody = webTestClient
+				.post()
+				.uri(String.format("http://127.0.0.1:%d/api/v1/usuarios", port))
+				.contentType(MediaType.APPLICATION_JSON)
+				.bodyValue(new UserCreateDto("bob@email.", "123456"))
+				.exchange()
+				.expectStatus().isEqualTo(422)
+				.expectBody(ErrorMessage.class)
+				.returnResult().getResponseBody();
+		
+		Assertions.assertThat(responseBody).isNotNull();
+		Assertions.assertThat(responseBody.getStatus()).isEqualTo(422);
+	}
+	
+	@Test
+	public void createUser_WithPasswordInvalid_ReturnErrorMessageStatus422() {
+		ErrorMessage responseBody = webTestClient
+				.post()
+				.uri(String.format("http://127.0.0.1:%d/api/v1/usuarios", port))
+				.contentType(MediaType.APPLICATION_JSON)
+				.bodyValue(new UserCreateDto("bob@email.com", ""))
+				.exchange()
+				.expectStatus().isEqualTo(422)
+				.expectBody(ErrorMessage.class)
+				.returnResult().getResponseBody();
+		
+		Assertions.assertThat(responseBody).isNotNull();
+		Assertions.assertThat(responseBody.getStatus()).isEqualTo(422);
+		
+		responseBody = webTestClient
+				.post()
+				.uri(String.format("http://127.0.0.1:%d/api/v1/usuarios", port))
+				.contentType(MediaType.APPLICATION_JSON)
+				.bodyValue(new UserCreateDto("bob@email.com", "12345"))
+				.exchange()
+				.expectStatus().isEqualTo(422)
+				.expectBody(ErrorMessage.class)
+				.returnResult().getResponseBody();
+		
+		Assertions.assertThat(responseBody).isNotNull();
+		Assertions.assertThat(responseBody.getStatus()).isEqualTo(422);
+		
+		responseBody = webTestClient
+				.post()
+				.uri(String.format("http://127.0.0.1:%d/api/v1/usuarios", port))
+				.contentType(MediaType.APPLICATION_JSON)
+				.bodyValue(new UserCreateDto("bob@email.com", "1234567"))
+				.exchange()
+				.expectStatus().isEqualTo(422)
+				.expectBody(ErrorMessage.class)
+				.returnResult().getResponseBody();
+		
+		Assertions.assertThat(responseBody).isNotNull();
+		Assertions.assertThat(responseBody.getStatus()).isEqualTo(422);	
 	}
 }

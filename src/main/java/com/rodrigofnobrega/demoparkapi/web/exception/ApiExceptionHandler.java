@@ -41,8 +41,8 @@ public class ApiExceptionHandler {
                                                                         HttpServletRequest request) {
         log.error("Api Error -", exception);
         return ResponseEntity
-                .status(HttpStatus.NOT_ACCEPTABLE)
+                .status(HttpStatus.NOT_FOUND)
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(new ErrorMessage(request, HttpStatus.NOT_ACCEPTABLE, exception.getMessage()));
+                .body(new ErrorMessage(request, HttpStatus.NOT_FOUND, exception.getMessage()));
     }
 }

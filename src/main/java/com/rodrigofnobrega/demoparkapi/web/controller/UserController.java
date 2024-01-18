@@ -78,6 +78,19 @@ public class UserController {
         return  ResponseEntity.ok(UserMapper.toListDto(users));
     }
 
+    @Operation(summary = "Alterar senha de usuário", description = "Recurso para alterar senha de usuário",
+            responses = {
+                    @ApiResponse(responseCode = "204", description = "Senha alterada com sucesso",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = Void.class))),
+                    @ApiResponse(responseCode = "404", description = "Usuário não encontrado",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = Void.class))),
+                    @ApiResponse(responseCode = "404",
+                            description = "Senha(s) inválida(s)",
+                            content = @Content(mediaType = "application/json",
+                                    schema = @Schema(implementation = ErrorMessage.class)))
+    })
     @PatchMapping("/{id}")
     public ResponseEntity<Void> updatePassword(@PathVariable Long id, @RequestBody UserPasswordDto userPasswordDto) {
         Optional<UserEntity> user = userService.updatePassword(id, userPasswordDto.getCurrentPassword(), userPasswordDto.getNewPassword(), userPasswordDto.getConfirmPassword());

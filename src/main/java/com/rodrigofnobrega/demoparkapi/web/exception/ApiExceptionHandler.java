@@ -1,5 +1,6 @@
 package com.rodrigofnobrega.demoparkapi.web.exception;
 
+import com.rodrigofnobrega.demoparkapi.exception.PasswordInvalidException;
 import com.rodrigofnobrega.demoparkapi.exception.UsernameUniqueViolationException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
@@ -33,5 +34,15 @@ public class ApiExceptionHandler {
                 .status(HttpStatus.CONFLICT)
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(new ErrorMessage(request, HttpStatus.CONFLICT, exception.getMessage()));
+    }
+
+    @ExceptionHandler(PasswordInvalidException.class)
+    public ResponseEntity<ErrorMessage> passwordInvalidException(RuntimeException exception,
+                                                                        HttpServletRequest request) {
+        log.error("Api Error -", exception);
+        return ResponseEntity
+                .status(HttpStatus.NOT_ACCEPTABLE)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(new ErrorMessage(request, HttpStatus.NOT_ACCEPTABLE, exception.getMessage()));
     }
 }

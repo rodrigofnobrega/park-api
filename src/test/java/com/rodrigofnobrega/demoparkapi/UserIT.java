@@ -1,24 +1,27 @@
 package com.rodrigofnobrega.demoparkapi;
 
 import com.rodrigofnobrega.demoparkapi.web.dto.UserCreateDto;
+import com.rodrigofnobrega.demoparkapi.web.dto.UserPasswordDto;
 import com.rodrigofnobrega.demoparkapi.web.dto.UserResponseDto;
 import com.rodrigofnobrega.demoparkapi.web.exception.ErrorMessage;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.reactive.server.WebTestClient;
+
+import java.util.List;
+
 import org.assertj.core.api.Assertions;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @Sql(scripts = "/sql/users/users-insert.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 @Sql(scripts = "/sql/users/users-delete.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
 class UserIT {
 	@LocalServerPort
-	private int port = 8081;
+	private int port = 8080;
 	
 	@Test
 	public void createUser_WithUsernameAndPasswordValid_ReturnUserCreateWithStatus201() {
@@ -172,4 +175,192 @@ class UserIT {
 		Assertions.assertThat(responseBody).isNotNull();
 		Assertions.assertThat(responseBody.getStatus()).isEqualTo(409);
 	}
+	
+	@Test
+	public void searchUser_WithValidId_ReturnUserWithStatus302() {
+		WebTestClient webTestClient = WebTestClient.bindToServer().baseUrl("http://127.0.0.1:" + port).build();	
+		
+		int user_id = 100;
+		
+		UserResponseDto responseBody = webTestClient
+				.get()
+				.uri("/api/v1/usuarios/" + user_id)
+				.exchange()
+				.expectStatus().isFound()
+				.expectBody(UserResponseDto.class)
+				.returnResult().getResponseBody();
+
+		Assertions.assertThat(responseBody).isNotNull();
+		Assertions.assertThat(responseBody.getId()).isEqualTo(user_id);
+		Assertions.assertThat(responseBody.getUsername()).isEqualTo("ana@email.com");
+		Assertions.assertThat(responseBody.getRole()).isEqualTo("ADMIN");
+	}
+	
+	@Test
+	public void searchUser_WithInvalidId_ReturnErrorMessageWithStatus404() {
+		WebTestClient webTestClient = WebTestClient.bindToServer().baseUrl("http://127.0.0.1:" + port).build();	
+		
+		int user_id = 0;
+		
+		ErrorMessage responseBody = webTestClient
+				.get()
+				.uri("/api/v1/usuarios/" + user_id)
+				.exchange()
+				.expectStatus().isNotFound()
+				.expectBody(ErrorMessage.class)
+				.returnResult().getResponseBody();
+
+		Assertions.assertThat(responseBody).isNotNull();
+		Assertions.assertThat(responseBody.getStatus()).isEqualTo(404);
+	}
+
+	@Test
+	public void editPassword_WithValidDatas_ReturnStatus204() {
+		WebTestClient webTestClient = WebTestClient.bindToServer().baseUrl("http://127.0.0.1:" + port).build();	
+		
+		int id = 100;
+		
+		webTestClient
+				.patch()
+				.uri("/api/v1/usuarios/" + id)
+				.contentType(MediaType.APPLICATION_JSON)
+				.bodyValue(new UserPasswordDto("123456", "112233", "112233"))
+				.exchange()
+				.expectStatus().isNoContent();
+	}
+	
+	@Test
+	public void editPassword_WithInvalidId_ReturnErrorMessageWithStatus404() {
+		WebTestClient webTestClient = WebTestClient.bindToServer().baseUrl("http://127.0.0.1:" + port).build();	
+		
+		int id = 0;
+		
+		ErrorMessage responseBody = webTestClient
+				.patch()
+				.uri("/api/v1/usuarios/" + id)
+				.contentType(MediaType.APPLICATION_JSON)
+				.bodyValue(new UserPasswordDto("123456", "112233", "112233"))
+				.exchange()
+				.expectStatus().isNotFound()
+				.expectBody(ErrorMessage.class)
+				.returnResult().getResponseBody();
+
+		Assertions.assertThat(responseBody).isNotNull();
+		Assertions.assertThat(responseBody.getStatus()).isEqualTo(404);
+	}
+	
+	@Test
+	public void editPassword_WithInvalidFields_ReturnErrorMessageWithStatus422() {
+		WebTestClient webTestClient = WebTestClient.bindToServer().baseUrl("http://127.0.0.1:" + port).build();	
+		
+		int id = 100;
+		
+		ErrorMessage responseBody = webTestClient
+				.patch()
+				.uri("/api/v1/usuarios/" + id)
+				.contentType(MediaType.APPLICATION_JSON)
+				.bodyValue(new UserPasswordDto("", "", ""))
+				.exchange()
+				.expectStatus().isEqualTo(422)
+				.expectBody(ErrorMessage.class)
+				.returnResult().getResponseBody();
+
+		Assertions.assertThat(responseBody).isNotNull();
+		Assertions.assertThat(responseBody.getStatus()).isEqualTo(422);
+		
+		responseBody = webTestClient
+				.patch()
+				.uri("/api/v1/usuarios/" + id)
+				.contentType(MediaType.APPLICATION_JSON)
+				.bodyValue(new UserPasswordDto("12345", "12345", "12345"))
+				.exchange()
+				.expectStatus().isEqualTo(422)
+				.expectBody(ErrorMessage.class)
+				.returnResult().getResponseBody();
+
+		Assertions.assertThat(responseBody).isNotNull();
+		Assertions.assertThat(responseBody.getStatus()).isEqualTo(422);
+		
+		responseBody = webTestClient
+				.patch()
+				.uri("/api/v1/usuarios/" + id)
+				.contentType(MediaType.APPLICATION_JSON)
+				.bodyValue(new UserPasswordDto("1234567", "1234567", "1234567"))
+				.exchange()
+				.expectStatus().isEqualTo(422)
+				.expectBody(ErrorMessage.class)
+				.returnResult().getResponseBody();
+
+		Assertions.assertThat(responseBody).isNotNull();
+		Assertions.assertThat(responseBody.getStatus()).isEqualTo(422);
+	}
+	
+	@Test
+	public void editPassword_WithInvalidPassword_ReturnErrorMessageWithStatus400() {
+		WebTestClient webTestClient = WebTestClient.bindToServer().baseUrl("http://127.0.0.1:" + port).build();	
+		
+		int id = 100;
+		
+		ErrorMessage responseBody = webTestClient
+				.patch()
+				.uri("/api/v1/usuarios/" + id)
+				.contentType(MediaType.APPLICATION_JSON)
+				.bodyValue(new UserPasswordDto("123456", "123456", "000000"))
+				.exchange()
+				.expectStatus().isEqualTo(400)
+				.expectBody(ErrorMessage.class)
+				.returnResult().getResponseBody();
+
+		Assertions.assertThat(responseBody).isNotNull();
+		Assertions.assertThat(responseBody.getStatus()).isEqualTo(400);
+		
+		responseBody = webTestClient
+				.patch()
+				.uri("/api/v1/usuarios/" + id)
+				.contentType(MediaType.APPLICATION_JSON)
+				.bodyValue(new UserPasswordDto("000000", "123456", "123456"))
+				.exchange()
+				.expectStatus().isEqualTo(400)
+				.expectBody(ErrorMessage.class)
+				.returnResult().getResponseBody();
+
+		Assertions.assertThat(responseBody).isNotNull();
+		Assertions.assertThat(responseBody.getStatus()).isEqualTo(400);
+	}
+	
+	@Test
+	public void listAllUsers_WithoutAnyParameters_ReturnUserListOfUsersWithStatus200() {
+		WebTestClient webTestClient = WebTestClient.bindToServer().baseUrl("http://127.0.0.1:" + port).build();	
+		
+		List<UserResponseDto> responseBody = webTestClient
+				.get()
+				.uri("/api/v1/usuarios")
+				.exchange()
+				.expectStatus().isOk()
+				.expectBodyList(UserResponseDto.class)
+				.returnResult()
+				.getResponseBody();
+		
+		UserResponseDto ana = new UserResponseDto();
+		ana.setId((long) 100);
+		ana.setUsername("ana@email.com");
+		ana.setRole("ADMIN");
+		
+		UserResponseDto bia = new UserResponseDto();
+		bia.setId((long) 101);
+		bia.setUsername("bia@email.com");
+		bia.setRole("CLIENTE");
+		
+		UserResponseDto bob = new UserResponseDto();
+		bob.setId((long) 102);
+		bob.setUsername("bob@email.com");
+		bob.setRole("CLIENTE");
+		
+		Assertions.assertThat(responseBody).isNotNull();
+		Assertions.assertThat(responseBody).hasSize(3);
+		Assertions.assertThat(responseBody).contains(ana);
+		Assertions.assertThat(responseBody).contains(bia);
+		Assertions.assertThat(responseBody).contains(bob);
+	}
+
 }

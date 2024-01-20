@@ -1,8 +1,7 @@
 package com.rodrigofnobrega.demoparkapi.service;
 
 import com.rodrigofnobrega.demoparkapi.entity.UserEntity;
-import com.rodrigofnobrega.demoparkapi.enums.HttpMessagesEnum;
-import com.rodrigofnobrega.demoparkapi.enums.utils.EnumUtils;
+import com.rodrigofnobrega.demoparkapi.exception.EntityNotFoundException;
 import com.rodrigofnobrega.demoparkapi.exception.PasswordInvalidException;
 import com.rodrigofnobrega.demoparkapi.exception.UsernameUniqueViolationException;
 import com.rodrigofnobrega.demoparkapi.repository.UserRepository;
@@ -29,30 +28,29 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public Optional<UserEntity> getById(Long id) {
-        return userRepository.findById(id);
+    public UserEntity getById(Long id) {
+        return userRepository.findById(id).orElseThrow(
+                () -> new EntityNotFoundException(String.format("Usuário id=%s não encontrado", id))
+        );
     }
-
     @Transactional
-    public Optional<UserEntity> updatePassword(Long id, String currentPassword, String newPassword, String confirmPassword) {
+    public UserEntity updatePassword(Long id, String currentPassword, String newPassword, String confirmPassword) {
         if (!newPassword.equals(confirmPassword)) {
-            throw new PasswordInvalidException(EnumUtils.enumToString(HttpMessagesEnum.NOVA_SENHA_NAO_CONFERE_COM_CONFIRMACAO_DE_SENHA));
+            throw new PasswordInvalidException("Sua senha não confere com confirmação de senha");
         }
 
-        Optional<UserEntity> user = getById(id);
+        UserEntity user = getById(id);
 
-        user.ifPresent(userEntity -> {
-            if (!user.get().getPassword().equals(currentPassword)) {
-                throw new PasswordInvalidException(EnumUtils.enumToString(HttpMessagesEnum.SUA_SENHA_NAO_CONFERE));
-            }
+        if (!user.getPassword().equals(currentPassword)) {
+            throw new PasswordInvalidException("Sua senha não confere.");
+        }
 
-            user.get().setPassword(newPassword);
-        });
-
+        user.setPassword(newPassword);
+        
         return user;
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public List<UserEntity> getAllUsers() {
         return userRepository.findAll();
     }

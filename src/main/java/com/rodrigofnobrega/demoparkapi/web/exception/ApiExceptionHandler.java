@@ -1,5 +1,6 @@
 package com.rodrigofnobrega.demoparkapi.web.exception;
 
+import com.rodrigofnobrega.demoparkapi.exception.EntityNotFoundException;
 import com.rodrigofnobrega.demoparkapi.exception.PasswordInvalidException;
 import com.rodrigofnobrega.demoparkapi.exception.UsernameUniqueViolationException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -41,8 +42,18 @@ public class ApiExceptionHandler {
                                                                         HttpServletRequest request) {
         log.error("Api Error -", exception);
         return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(new ErrorMessage(request, HttpStatus.BAD_REQUEST, exception.getMessage()));
+    }
+    
+    @ExceptionHandler(EntityNotFoundException.class)
+    public ResponseEntity<ErrorMessage> entityNotFoundException(RuntimeException ex, HttpServletRequest request) {
+        log.error("Api Error - ", ex);
+        return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(new ErrorMessage(request, HttpStatus.NOT_FOUND, exception.getMessage()));
+                .body(new ErrorMessage(request, HttpStatus.NOT_FOUND, ex.getMessage()));
     }
+
 }

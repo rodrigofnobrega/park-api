@@ -1,6 +1,7 @@
 package com.rodrigofnobrega.demoparkapi.service;
 
 import com.rodrigofnobrega.demoparkapi.entity.UserEntity;
+import com.rodrigofnobrega.demoparkapi.enums.UserRoleEnum;
 import com.rodrigofnobrega.demoparkapi.exception.EntityNotFoundException;
 import com.rodrigofnobrega.demoparkapi.exception.PasswordInvalidException;
 import com.rodrigofnobrega.demoparkapi.exception.UsernameUniqueViolationException;
@@ -54,4 +55,16 @@ public class UserService {
     public List<UserEntity> getAllUsers() {
         return userRepository.findAll();
     }
+    
+    @Transactional(readOnly = true)
+	public UserEntity getByUsername(String username) {
+		return userRepository.findByUsername(username).orElseThrow(
+				() -> new EntityNotFoundException(String.format("Usuario com '%s' não encontrado", username))
+		);
+	}
+    
+    @Transactional(readOnly = true)
+	public UserRoleEnum findRoleByUsername(String username) {
+		return userRepository.findRoleByUsername(username);
+	}
 }

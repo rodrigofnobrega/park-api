@@ -11,14 +11,14 @@ public class JwtUserDetails extends User{
 
 	public JwtUserDetails(UserEntity user) {
 		super(user.getUsername(), user.getPassword(), AuthorityUtils.createAuthorityList(user.getRole().name()));
-		userEntity = user;
+		this.userEntity = user;
 	}
 	
 	public Long getId() {
-		return userEntity.getId();
+		return this.userEntity.getId();
 	}
 	
 	public String getRole() {
-		return userEntity.getRole().name();
+		return this.userEntity.getRole().name();
 	}
 }

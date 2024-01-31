@@ -11,7 +11,7 @@ import com.rodrigofnobrega.demoparkapi.enums.UserRoleEnum;
 public interface UserRepository extends JpaRepository<UserEntity, Long> {
 
 	Optional<UserEntity> findByUsername(String username);
-	
-	@Query("SELECT u.role from Usuario u WHERE u.username = :username")
+
+	@Query("SELECT u.role FROM UserEntity u WHERE u.username = :username")
 	UserRoleEnum findRoleByUsername(String username);
 }

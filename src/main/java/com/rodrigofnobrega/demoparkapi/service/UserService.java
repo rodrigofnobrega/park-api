@@ -8,6 +8,7 @@ import com.rodrigofnobrega.demoparkapi.exception.UsernameUniqueViolationExceptio
 import com.rodrigofnobrega.demoparkapi.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,10 +19,12 @@ import java.util.Optional;
 @Service
 public class UserService {
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Transactional
     public UserEntity save(UserEntity user) {
         try {
+            user.setPassword(passwordEncoder.encode(user.getUsername()));
             return userRepository.save(user);
         } catch (DataIntegrityViolationException exception) {
             throw new UsernameUniqueViolationException(String.format("Username {%s} já cadastrado", user.getUsername()));
@@ -42,11 +45,11 @@ public class UserService {
 
         UserEntity user = getById(id);
 
-        if (!user.getPassword().equals(currentPassword)) {
+        if (!passwordEncoder.matches(currentPassword,user.getPassword())) {
             throw new PasswordInvalidException("Sua senha não confere.");
         }
 
-        user.setPassword(newPassword);
+        user.setPassword(passwordEncoder.encode(newPassword));
         
         return user;
     }

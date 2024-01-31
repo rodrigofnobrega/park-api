@@ -49,7 +49,7 @@ public class UserController {
 
     @Operation(summary = "Buscar usuário pelo ID", description = "Recurso para buscar um usuário pelo ID",
             responses = {
-                @ApiResponse(responseCode = "302", description = "Usuário encontrado com sucesso",
+                @ApiResponse(responseCode = "200", description = "Usuário encontrado com sucesso",
                             content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserResponseDto.class))),
                 @ApiResponse(responseCode = "404", description = "Usuário não encontrado",
                             content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class)))
@@ -59,7 +59,7 @@ public class UserController {
     public ResponseEntity<Object> getById(@PathVariable Long id) {
         UserEntity user  = userService.getById(id);
 
-        return ResponseEntity.status(HttpStatus.FOUND).body(UserMapper.toDto(user));
+        return ResponseEntity.status(HttpStatus.OK).body(UserMapper.toDto(user));
     }
 
     @Operation(summary = "Buscar todos os usuários", description = "Recurso para buscar todos os usuários cadastrados",

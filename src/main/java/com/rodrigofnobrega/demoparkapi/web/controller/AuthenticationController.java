@@ -30,7 +30,7 @@ public class AuthenticationController {
     private final AuthenticationManager authenticationManager;
 
     @PostMapping("/auth")
-    public ResponseEntity<?> autenticar(@RequestBody @Valid UserLoginDto dto, HttpServletRequest request) {
+    public ResponseEntity<?> authenticate(@RequestBody @Valid UserLoginDto dto, HttpServletRequest request) {
         log.info("Processo de autenticação pelo login {}", dto.getUsername());
         try {
             UsernamePasswordAuthenticationToken authenticationToken =

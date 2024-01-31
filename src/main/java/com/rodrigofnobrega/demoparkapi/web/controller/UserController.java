@@ -55,7 +55,7 @@ public class UserController {
                             content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class)))
             })
     @GetMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') OR ( hasRole('CLIENTE') AND  #id == authentication.principal.id)")
     public ResponseEntity<Object> getById(@PathVariable Long id) {
         UserEntity user  = userService.getById(id);
 

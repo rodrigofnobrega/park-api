@@ -177,23 +177,54 @@ class UserIT {
 	}
 	
 	@Test
-	public void searchUser_WithValidId_ReturnUserWithStatus302() {
-		WebTestClient webTestClient = WebTestClient.bindToServer().baseUrl("http://127.0.0.1:" + port).build();	
-		
-		int user_id = 100;
+	public void searchUser_WithValidId_ReturnUserWithStatus200() {
+		WebTestClient webTestClient = WebTestClient.bindToServer().baseUrl("http://127.0.0.1:" + port).build();
+
+		int userId = 100;
 		
 		UserResponseDto responseBody = webTestClient
 				.get()
-				.uri("/api/v1/usuarios/" + user_id)
+				.uri("/api/v1/usuarios/" + userId)
+				.headers(JwtAuthentication.getHeaderAuthorization(webTestClient, "ana@email.com", "123456"))
 				.exchange()
-				.expectStatus().isFound()
+				.expectStatus().isOk()
 				.expectBody(UserResponseDto.class)
 				.returnResult().getResponseBody();
 
 		Assertions.assertThat(responseBody).isNotNull();
-		Assertions.assertThat(responseBody.getId()).isEqualTo(user_id);
+		Assertions.assertThat(responseBody.getId()).isEqualTo(userId);
 		Assertions.assertThat(responseBody.getUsername()).isEqualTo("ana@email.com");
 		Assertions.assertThat(responseBody.getRole()).isEqualTo("ADMIN");
+
+		userId = 101;
+
+		 responseBody = webTestClient
+				.get()
+				.uri("/api/v1/usuarios/" + userId)
+				.headers(JwtAuthentication.getHeaderAuthorization(webTestClient, "ana@email.com", "123456"))
+				.exchange()
+				.expectStatus().isOk()
+				.expectBody(UserResponseDto.class)
+				.returnResult().getResponseBody();
+
+		Assertions.assertThat(responseBody).isNotNull();
+		Assertions.assertThat(responseBody.getId()).isEqualTo(userId);
+		Assertions.assertThat(responseBody.getUsername()).isEqualTo("bia@email.com");
+		Assertions.assertThat(responseBody.getRole()).isEqualTo("CLIENTE");
+
+		responseBody = webTestClient
+				.get()
+				.uri("/api/v1/usuarios/" + userId)
+				.headers(JwtAuthentication.getHeaderAuthorization(webTestClient, "bia@email.com", "123456"))
+				.exchange()
+				.expectStatus().isOk()
+				.expectBody(UserResponseDto.class)
+				.returnResult().getResponseBody();
+
+		Assertions.assertThat(responseBody).isNotNull();
+		Assertions.assertThat(responseBody.getId()).isEqualTo(userId);
+		Assertions.assertThat(responseBody.getUsername()).isEqualTo("bia@email.com");
+		Assertions.assertThat(responseBody.getRole()).isEqualTo("CLIENTE");
 	}
 	
 	@Test

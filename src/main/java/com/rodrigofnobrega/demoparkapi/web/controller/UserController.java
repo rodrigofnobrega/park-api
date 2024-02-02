@@ -68,6 +68,7 @@ public class UserController {
                             content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserResponseDto.class)))
             })
     @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<UserResponseDto>> getAllUsers() {
         List<UserEntity> users = userService.getAllUsers();
 

@@ -226,16 +226,35 @@ class UserIT {
 		Assertions.assertThat(responseBody.getUsername()).isEqualTo("bia@email.com");
 		Assertions.assertThat(responseBody.getRole()).isEqualTo("CLIENTE");
 	}
-	
+
 	@Test
-	public void searchUser_WithInvalidId_ReturnErrorMessageWithStatus404() {
-		WebTestClient webTestClient = WebTestClient.bindToServer().baseUrl("http://127.0.0.1:" + port).build();	
-		
-		int user_id = 0;
-		
+	public void searchUser_WithUserClientFindOtherClient_ReturnErrorMessageWithStatus403() {
+		WebTestClient webTestClient = WebTestClient.bindToServer().baseUrl("http://127.0.0.1:" + port).build();
+
+		int user_id = 102;
+
 		ErrorMessage responseBody = webTestClient
 				.get()
 				.uri("/api/v1/usuarios/" + user_id)
+				.headers(JwtAuthentication.getHeaderAuthorization(webTestClient, "bia@email.com", "123456"))
+				.exchange()
+				.expectStatus().isForbidden()
+				.expectBody(ErrorMessage.class)
+				.returnResult().getResponseBody();
+
+		Assertions.assertThat(responseBody).isNotNull();
+		Assertions.assertThat(responseBody.getStatus()).isEqualTo(403);
+	}
+	@Test
+	public void searchUser_WithInvalidId_ReturnErrorMessageWithStatus404() {
+		WebTestClient webTestClient = WebTestClient.bindToServer().baseUrl("http://127.0.0.1:" + port).build();
+
+		int user_id = 0;
+
+		ErrorMessage responseBody = webTestClient
+				.get()
+				.uri("/api/v1/usuarios/" + user_id)
+				.headers(JwtAuthentication.getHeaderAuthorization(webTestClient, "ana@email.com", "123456"))
 				.exchange()
 				.expectStatus().isNotFound()
 				.expectBody(ErrorMessage.class)

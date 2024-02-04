@@ -273,14 +273,26 @@ class UserIT {
 		webTestClient
 				.patch()
 				.uri("/api/v1/usuarios/" + id)
+				.headers(JwtAuthentication.getHeaderAuthorization(webTestClient, "ana@email.com", "123456"))
 				.contentType(MediaType.APPLICATION_JSON)
-				.bodyValue(new UserPasswordDto("123456", "112233", "112233"))
+				.bodyValue(new UserPasswordDto("123456", "123456", "123456"))
+				.exchange()
+				.expectStatus().isNoContent();
+
+		id = 101;
+
+		webTestClient
+				.patch()
+				.uri("/api/v1/usuarios/" + id)
+				.headers(JwtAuthentication.getHeaderAuthorization(webTestClient, "bia@email.com", "123456"))
+				.contentType(MediaType.APPLICATION_JSON)
+				.bodyValue(new UserPasswordDto("123456", "123456", "123456"))
 				.exchange()
 				.expectStatus().isNoContent();
 	}
 	
 	@Test
-	public void editPassword_WithInvalidId_ReturnErrorMessageWithStatus404() {
+	public void editPassword_WithDifferentUsers_ReturnErrorMessageWithStatus403() {
 		WebTestClient webTestClient = WebTestClient.bindToServer().baseUrl("http://127.0.0.1:" + port).build();	
 		
 		int id = 0;
@@ -289,14 +301,29 @@ class UserIT {
 				.patch()
 				.uri("/api/v1/usuarios/" + id)
 				.contentType(MediaType.APPLICATION_JSON)
+                .headers(JwtAuthentication.getHeaderAuthorization(webTestClient, "ana@email.com", "123456"))
 				.bodyValue(new UserPasswordDto("123456", "112233", "112233"))
 				.exchange()
-				.expectStatus().isNotFound()
+				.expectStatus().isForbidden()
 				.expectBody(ErrorMessage.class)
 				.returnResult().getResponseBody();
 
 		Assertions.assertThat(responseBody).isNotNull();
-		Assertions.assertThat(responseBody.getStatus()).isEqualTo(404);
+		Assertions.assertThat(responseBody.getStatus()).isEqualTo(403);
+
+        responseBody = webTestClient
+                .patch()
+                .uri("/api/v1/usuarios/" + id)
+                .contentType(MediaType.APPLICATION_JSON)
+                .headers(JwtAuthentication.getHeaderAuthorization(webTestClient, "bia@email.com", "123456"))
+                .bodyValue(new UserPasswordDto("123456", "112233", "112233"))
+                .exchange()
+                .expectStatus().isForbidden()
+                .expectBody(ErrorMessage.class)
+                .returnResult().getResponseBody();
+
+        Assertions.assertThat(responseBody).isNotNull();
+        Assertions.assertThat(responseBody.getStatus()).isEqualTo(403);
 	}
 	
 	@Test

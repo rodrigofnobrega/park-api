@@ -335,6 +335,7 @@ class UserIT {
 		ErrorMessage responseBody = webTestClient
 				.patch()
 				.uri("/api/v1/usuarios/" + id)
+                .headers(JwtAuthentication.getHeaderAuthorization(webTestClient, "ana@email.com", "123456"))
 				.contentType(MediaType.APPLICATION_JSON)
 				.bodyValue(new UserPasswordDto("", "", ""))
 				.exchange()
@@ -348,6 +349,7 @@ class UserIT {
 		responseBody = webTestClient
 				.patch()
 				.uri("/api/v1/usuarios/" + id)
+                .headers(JwtAuthentication.getHeaderAuthorization(webTestClient, "ana@email.com", "123456"))
 				.contentType(MediaType.APPLICATION_JSON)
 				.bodyValue(new UserPasswordDto("12345", "12345", "12345"))
 				.exchange()
@@ -361,6 +363,7 @@ class UserIT {
 		responseBody = webTestClient
 				.patch()
 				.uri("/api/v1/usuarios/" + id)
+                .headers(JwtAuthentication.getHeaderAuthorization(webTestClient, "ana@email.com", "123456"))
 				.contentType(MediaType.APPLICATION_JSON)
 				.bodyValue(new UserPasswordDto("1234567", "1234567", "1234567"))
 				.exchange()
@@ -381,6 +384,7 @@ class UserIT {
 		ErrorMessage responseBody = webTestClient
 				.patch()
 				.uri("/api/v1/usuarios/" + id)
+                .headers(JwtAuthentication.getHeaderAuthorization(webTestClient, "ana@email.com", "123456"))
 				.contentType(MediaType.APPLICATION_JSON)
 				.bodyValue(new UserPasswordDto("123456", "123456", "000000"))
 				.exchange()
@@ -394,6 +398,7 @@ class UserIT {
 		responseBody = webTestClient
 				.patch()
 				.uri("/api/v1/usuarios/" + id)
+                .headers(JwtAuthentication.getHeaderAuthorization(webTestClient, "ana@email.com", "123456"))
 				.contentType(MediaType.APPLICATION_JSON)
 				.bodyValue(new UserPasswordDto("000000", "123456", "123456"))
 				.exchange()
@@ -412,6 +417,7 @@ class UserIT {
 		List<UserResponseDto> responseBody = webTestClient
 				.get()
 				.uri("/api/v1/usuarios")
+                .headers(JwtAuthentication.getHeaderAuthorization(webTestClient, "ana@email.com", "123456"))
 				.exchange()
 				.expectStatus().isOk()
 				.expectBodyList(UserResponseDto.class)
@@ -439,5 +445,24 @@ class UserIT {
 		Assertions.assertThat(responseBody).contains(bia);
 		Assertions.assertThat(responseBody).contains(bob);
 	}
+
+    @Test
+    public void listAllUsers_WithUserWithoutPermission_ReturnErrorMessageWithStatus403() {
+        WebTestClient webTestClient = WebTestClient.bindToServer().baseUrl("http://127.0.0.1:" + port).build();
+
+        ErrorMessage responseBody = webTestClient
+                .get()
+                .uri("/api/v1/usuarios")
+                .headers(JwtAuthentication.getHeaderAuthorization(webTestClient, "bia@email.com", "123456"))
+                .exchange()
+                .expectStatus().isForbidden()
+                .expectBody(ErrorMessage.class)
+                .returnResult()
+                .getResponseBody();
+
+        Assertions.assertThat(responseBody).isNotNull();
+        Assertions.assertThat(responseBody.getStatus()).isEqualTo(403);
+    }
+
 
 }

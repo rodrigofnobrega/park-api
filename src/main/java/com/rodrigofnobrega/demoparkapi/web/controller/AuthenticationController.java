@@ -1,6 +1,6 @@
 package com.rodrigofnobrega.demoparkapi.web.controller;
 
-import com.rodrigofnobrega.demoparkapi.web.dto.UserResponseDto;
+import com.rodrigofnobrega.demoparkapi.web.dto.user.UserResponseDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.rodrigofnobrega.demoparkapi.jwt.JwtToken;
 import com.rodrigofnobrega.demoparkapi.jwt.JwtUserDetailsService;
-import com.rodrigofnobrega.demoparkapi.web.dto.UserLoginDto;
+import com.rodrigofnobrega.demoparkapi.web.dto.user.UserLoginDto;
 import com.rodrigofnobrega.demoparkapi.web.exception.ErrorMessage;
 
 import jakarta.servlet.http.HttpServletRequest;

@@ -2,9 +2,9 @@ package com.rodrigofnobrega.demoparkapi.web.controller;
 
 import com.rodrigofnobrega.demoparkapi.entity.UserEntity;
 import com.rodrigofnobrega.demoparkapi.service.UserService;
-import com.rodrigofnobrega.demoparkapi.web.dto.UserCreateDto;
-import com.rodrigofnobrega.demoparkapi.web.dto.UserPasswordDto;
-import com.rodrigofnobrega.demoparkapi.web.dto.UserResponseDto;
+import com.rodrigofnobrega.demoparkapi.web.dto.user.UserCreateDto;
+import com.rodrigofnobrega.demoparkapi.web.dto.user.UserPasswordDto;
+import com.rodrigofnobrega.demoparkapi.web.dto.user.UserResponseDto;
 import com.rodrigofnobrega.demoparkapi.web.dto.mapper.UserMapper;
 import com.rodrigofnobrega.demoparkapi.web.exception.ErrorMessage;
 import io.swagger.v3.oas.annotations.Operation;

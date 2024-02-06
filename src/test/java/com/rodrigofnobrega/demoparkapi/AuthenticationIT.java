@@ -1,7 +1,7 @@
 package com.rodrigofnobrega.demoparkapi;
 
 import com.rodrigofnobrega.demoparkapi.jwt.JwtToken;
-import com.rodrigofnobrega.demoparkapi.web.dto.UserLoginDto;
+import com.rodrigofnobrega.demoparkapi.web.dto.user.UserLoginDto;
 import com.rodrigofnobrega.demoparkapi.web.exception.ErrorMessage;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;

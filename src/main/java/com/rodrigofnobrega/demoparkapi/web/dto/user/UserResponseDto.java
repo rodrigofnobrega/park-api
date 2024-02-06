@@ -1,4 +1,4 @@
-package com.rodrigofnobrega.demoparkapi.web.dto;
+package com.rodrigofnobrega.demoparkapi.web.dto.user;
 
 import java.util.Objects;
 

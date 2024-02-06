@@ -1,8 +1,8 @@
 package com.rodrigofnobrega.demoparkapi;
 
-import com.rodrigofnobrega.demoparkapi.web.dto.UserCreateDto;
-import com.rodrigofnobrega.demoparkapi.web.dto.UserPasswordDto;
-import com.rodrigofnobrega.demoparkapi.web.dto.UserResponseDto;
+import com.rodrigofnobrega.demoparkapi.web.dto.user.UserCreateDto;
+import com.rodrigofnobrega.demoparkapi.web.dto.user.UserPasswordDto;
+import com.rodrigofnobrega.demoparkapi.web.dto.user.UserResponseDto;
 import com.rodrigofnobrega.demoparkapi.web.exception.ErrorMessage;
 
 import org.junit.jupiter.api.Test;

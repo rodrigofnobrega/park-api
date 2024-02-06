@@ -1,8 +1,8 @@
 package com.rodrigofnobrega.demoparkapi.web.dto.mapper;
 
 import com.rodrigofnobrega.demoparkapi.entity.UserEntity;
-import com.rodrigofnobrega.demoparkapi.web.dto.UserCreateDto;
-import com.rodrigofnobrega.demoparkapi.web.dto.UserResponseDto;
+import com.rodrigofnobrega.demoparkapi.web.dto.user.UserCreateDto;
+import com.rodrigofnobrega.demoparkapi.web.dto.user.UserResponseDto;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.PropertyMap;
 

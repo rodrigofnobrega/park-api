@@ -1,7 +1,7 @@
 package com.rodrigofnobrega.demoparkapi;
 
 import com.rodrigofnobrega.demoparkapi.jwt.JwtToken;
-import com.rodrigofnobrega.demoparkapi.web.dto.UserLoginDto;
+import com.rodrigofnobrega.demoparkapi.web.dto.user.UserLoginDto;
 import org.springframework.http.HttpHeaders;
 import org.springframework.test.web.reactive.server.WebTestClient;
 

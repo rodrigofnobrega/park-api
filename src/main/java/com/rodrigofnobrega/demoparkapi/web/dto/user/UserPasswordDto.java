@@ -1,4 +1,4 @@
-package com.rodrigofnobrega.demoparkapi.web.dto;
+package com.rodrigofnobrega.demoparkapi.web.dto.user;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;

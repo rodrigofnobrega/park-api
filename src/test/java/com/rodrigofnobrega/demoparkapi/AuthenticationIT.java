@@ -39,7 +39,7 @@ public class AuthenticationIT {
     public void authenticate_WithInvalidCredentials_ReturnErrorMessageWithStatus400() {
         WebTestClient webTestClient = WebTestClient.bindToServer().baseUrl("http://127.0.0.1:" + port).build();
 
-        ErrorMessage jwtToken = webTestClient
+        ErrorMessage responseBody = webTestClient
                 .post()
                 .uri("/api/v1/auth")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -49,10 +49,10 @@ public class AuthenticationIT {
                 .expectBody(ErrorMessage.class)
                 .returnResult().getResponseBody();
 
-        Assertions.assertThat(jwtToken).isNotNull();
-        Assertions.assertThat(jwtToken.getStatus()).isEqualTo(400);
+        Assertions.assertThat(responseBody).isNotNull();
+        Assertions.assertThat(responseBody.getStatus()).isEqualTo(400);
 
-        jwtToken = webTestClient
+        responseBody = webTestClient
                 .post()
                 .uri("/api/v1/auth")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -62,7 +62,7 @@ public class AuthenticationIT {
                 .expectBody(ErrorMessage.class)
                 .returnResult().getResponseBody();
 
-        Assertions.assertThat(jwtToken).isNotNull();
-        Assertions.assertThat(jwtToken.getStatus()).isEqualTo(400);
+        Assertions.assertThat(responseBody).isNotNull();
+        Assertions.assertThat(responseBody.getStatus()).isEqualTo(400);
     }
 }

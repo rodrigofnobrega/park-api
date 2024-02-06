@@ -2,6 +2,7 @@ package com.rodrigofnobrega.demoparkapi;
 
 import com.rodrigofnobrega.demoparkapi.jwt.JwtToken;
 import com.rodrigofnobrega.demoparkapi.web.dto.UserLoginDto;
+import com.rodrigofnobrega.demoparkapi.web.exception.ErrorMessage;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -32,5 +33,36 @@ public class AuthenticationIT {
                 .returnResult().getResponseBody();
 
         Assertions.assertThat(jwtToken).isNotNull();
+    }
+
+    @Test
+    public void authenticate_WithInvalidCredentials_ReturnErrorMessageWithStatus400() {
+        WebTestClient webTestClient = WebTestClient.bindToServer().baseUrl("http://127.0.0.1:" + port).build();
+
+        ErrorMessage jwtToken = webTestClient
+                .post()
+                .uri("/api/v1/auth")
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(new UserLoginDto("invalido@email.com", "123456"))
+                .exchange()
+                .expectStatus().isBadRequest()
+                .expectBody(ErrorMessage.class)
+                .returnResult().getResponseBody();
+
+        Assertions.assertThat(jwtToken).isNotNull();
+        Assertions.assertThat(jwtToken.getStatus()).isEqualTo(400);
+
+        jwtToken = webTestClient
+                .post()
+                .uri("/api/v1/auth")
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(new UserLoginDto("ana@email.com", "000000"))
+                .exchange()
+                .expectStatus().isBadRequest()
+                .expectBody(ErrorMessage.class)
+                .returnResult().getResponseBody();
+
+        Assertions.assertThat(jwtToken).isNotNull();
+        Assertions.assertThat(jwtToken.getStatus()).isEqualTo(400);
     }
 }

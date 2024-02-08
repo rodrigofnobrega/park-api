@@ -1,5 +1,6 @@
 package com.rodrigofnobrega.demoparkapi.web.exception;
 
+import com.rodrigofnobrega.demoparkapi.exception.CpfUniqueViolationException;
 import com.rodrigofnobrega.demoparkapi.exception.EntityNotFoundException;
 import com.rodrigofnobrega.demoparkapi.exception.PasswordInvalidException;
 import com.rodrigofnobrega.demoparkapi.exception.UsernameUniqueViolationException;
@@ -28,8 +29,8 @@ public class ApiExceptionHandler {
                 .body(new ErrorMessage(request, HttpStatus.UNPROCESSABLE_ENTITY, "Campo(s) invalido(s)", result));
     }
 
-    @ExceptionHandler(UsernameUniqueViolationException.class)
-    public ResponseEntity<ErrorMessage> methodArgumentNotValidException(RuntimeException exception,
+    @ExceptionHandler({UsernameUniqueViolationException.class, CpfUniqueViolationException.class})
+    public ResponseEntity<ErrorMessage> uniqueViolationException(RuntimeException exception,
                                                                         HttpServletRequest request) {
         log.error("Api Error -", exception);
         return ResponseEntity

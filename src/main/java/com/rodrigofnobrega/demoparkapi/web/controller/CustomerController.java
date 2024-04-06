@@ -41,7 +41,7 @@ public class CustomerController {
                         content = @Content(mediaType = "applicaton/json;charset=UTF-8", schema = @Schema(implementation = ErrorMessage.class))),
                 @ApiResponse(responseCode = "422", description = "Recurso não processado por falta de dados ou dados inválidos",
                         content = @Content(mediaType = "applicaton/json;charset=UTF-8", schema = @Schema(implementation = ErrorMessage.class))),
-                @ApiResponse(responseCode = "403", description = "Recurso não permitido ao perfil de ADMIN",
+                @ApiResponse(responseCode = "403", description = "Recurso não permitido ao perfil de ADMINs",
                         content = @Content(mediaType = "applicaton/json;charset=UTF-8", schema = @Schema(implementation = ErrorMessage.class))),
             })
     @PostMapping

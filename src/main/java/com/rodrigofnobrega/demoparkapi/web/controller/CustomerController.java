@@ -15,14 +15,12 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "Clientes", description = "Contém todas as operações realativas ao recurso de um cliente")
 @RequiredArgsConstructor
@@ -53,5 +51,12 @@ public class CustomerController {
         customerService.save(customer);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(CustomerMapper.toDto(customer));
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<CustomerResponseDto> findById(@PathVariable Long id) {
+        CustomerEntity customer = customerService.findById(id);
+
+        return ResponseEntity.ok(CustomerMapper.toDto(customer));
     }
 }

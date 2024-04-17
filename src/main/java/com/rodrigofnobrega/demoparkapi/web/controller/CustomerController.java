@@ -2,11 +2,14 @@ package com.rodrigofnobrega.demoparkapi.web.controller;
 
 import com.rodrigofnobrega.demoparkapi.entity.CustomerEntity;
 import com.rodrigofnobrega.demoparkapi.jwt.JwtUserDetails;
+import com.rodrigofnobrega.demoparkapi.repository.projection.CustomerProjection;
 import com.rodrigofnobrega.demoparkapi.service.CustomerService;
 import com.rodrigofnobrega.demoparkapi.service.UserService;
 import com.rodrigofnobrega.demoparkapi.web.dto.customer.CustomerCreateDto;
 import com.rodrigofnobrega.demoparkapi.web.dto.customer.CustomerResponseDto;
 import com.rodrigofnobrega.demoparkapi.web.dto.mapper.CustomerMapper;
+import com.rodrigofnobrega.demoparkapi.web.dto.mapper.PageableMapper;
+import com.rodrigofnobrega.demoparkapi.web.dto.pageable.PageableDto;
 import com.rodrigofnobrega.demoparkapi.web.exception.ErrorMessage;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -16,11 +19,15 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.apache.coyote.Response;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Tag(name = "Clientes", description = "Contém todas as operações realativas ao recurso de um cliente")
 @RequiredArgsConstructor
@@ -69,5 +76,13 @@ public class CustomerController {
         CustomerEntity customer = customerService.findById(id);
 
         return ResponseEntity.ok(CustomerMapper.toDto(customer));
+    }
+
+    @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<PageableDto> findAll(Pageable pageable) {
+        Page<CustomerProjection> customer = customerService.findAll(pageable);
+
+        return ResponseEntity.ok(PageableMapper.toDto(customer));
     }
 }

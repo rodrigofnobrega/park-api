@@ -53,7 +53,18 @@ public class CustomerController {
         return ResponseEntity.status(HttpStatus.CREATED).body(CustomerMapper.toDto(customer));
     }
 
+    @Operation(summary = "Localizar um cliente", description = "Recurso para localizar um cliente pelo ID." +
+            "Requisição exige uso de um bearer token. Acesso restrito a Role='ADMIN'",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Recurso localizado com sucesso",
+                            content = @Content(mediaType = "applicaton/json;charset=UTF-8", schema = @Schema(implementation = CustomerResponseDto.class))),
+                    @ApiResponse(responseCode = "404", description = "Cliente não encontrado",
+                            content = @Content(mediaType = "applicaton/json;charset=UTF-8", schema = @Schema(implementation = ErrorMessage.class))),
+                    @ApiResponse(responseCode = "403", description = "Recurso não permitido ao perfil de CLIENTE",
+                            content = @Content(mediaType = "applicaton/json;charset=UTF-8", schema = @Schema(implementation = ErrorMessage.class))),
+            })
     @GetMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<CustomerResponseDto> findById(@PathVariable Long id) {
         CustomerEntity customer = customerService.findById(id);
 

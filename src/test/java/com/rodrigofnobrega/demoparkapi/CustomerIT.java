@@ -124,4 +124,55 @@ public class CustomerIT {
         Assertions.assertThat(responseBody).isNotNull();
         Assertions.assertThat(responseBody.getStatus()).isEqualTo(403);
     }
+
+    @Test
+    public void findCustomer_WithExistingIdByAdmin_ReturnCustomerWithStatus200() {
+        WebTestClient testClient = WebTestClient.bindToServer().baseUrl("http://127.0.0.1:" + port).build();
+
+        CustomerResponseDto responseBody = testClient
+                .get()
+                .uri("/api/v1/customers/10")
+                .headers(JwtAuthentication.getHeaderAuthorization(testClient, "ana@email.com", "123456"))
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(CustomerResponseDto.class)
+                .returnResult().getResponseBody();
+
+        Assertions.assertThat(responseBody).isNotNull();
+        Assertions.assertThat(responseBody.getId()).isEqualTo(10);
+    }
+
+    @Test
+    public void findCustomer_WithNotExistingIdByAdmin_ReturnErrorMessageWithStatus404() {
+        WebTestClient testClient = WebTestClient.bindToServer().baseUrl("http://127.0.0.1:" + port).build();
+
+        ErrorMessage responseBody = testClient
+                .get()
+                .uri("/api/v1/customers/0")
+                .headers(JwtAuthentication.getHeaderAuthorization(testClient, "ana@email.com", "123456"))
+                .exchange()
+                .expectStatus().isNotFound()
+                .expectBody(ErrorMessage.class)
+                .returnResult().getResponseBody();
+
+        Assertions.assertThat(responseBody).isNotNull();
+        Assertions.assertThat(responseBody.getStatus()).isEqualTo(404);
+    }
+
+    @Test
+    public void findCustomer_WithExistingIdByCustomer_ReturnErrorMessageWithStatus403() {
+        WebTestClient testClient = WebTestClient.bindToServer().baseUrl("http://127.0.0.1:" + port).build();
+
+        ErrorMessage responseBody = testClient
+                .get()
+                .uri("/api/v1/customers/0")
+                .headers(JwtAuthentication.getHeaderAuthorization(testClient, "bia@email.com", "123456"))
+                .exchange()
+                .expectStatus().isForbidden()
+                .expectBody(ErrorMessage.class)
+                .returnResult().getResponseBody();
+
+        Assertions.assertThat(responseBody).isNotNull();
+        Assertions.assertThat(responseBody.getStatus()).isEqualTo(403);
+    }
 }

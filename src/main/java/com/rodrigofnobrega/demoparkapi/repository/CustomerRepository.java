@@ -12,4 +12,6 @@ import org.springframework.stereotype.Repository;
 public interface CustomerRepository extends JpaRepository<CustomerEntity, Long> {
     @Query("select c from CustomerEntity c")
     Page<CustomerProjection> findAllPageable(Pageable pageable);
+
+    CustomerEntity findByUserEntityId(Long id);
 }

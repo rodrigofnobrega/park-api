@@ -115,4 +115,12 @@ public class CustomerController {
 
         return ResponseEntity.ok(PageableMapper.toDto(customer));
     }
+
+    @GetMapping("/detalhes")
+    @PreAuthorize("hasRole('CLIENTE')")
+    public ResponseEntity<CustomerResponseDto> getDetails(@AuthenticationPrincipal JwtUserDetails userDetails) {
+        CustomerEntity customer = customerService.findUserById(userDetails.getId());
+
+        return ResponseEntity.ok(CustomerMapper.toDto(customer));
+    }
 }

@@ -41,4 +41,9 @@ public class CustomerService {
     public Page<CustomerProjection> findAll(Pageable pageable) {
         return customerRepository.findAllPageable(pageable);
     }
+
+    @Transactional(readOnly = true)
+    public CustomerEntity findUserById(Long id) {
+        return customerRepository.findByUserEntityId(id);
+    }
 }

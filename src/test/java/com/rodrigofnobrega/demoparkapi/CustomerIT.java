@@ -2,6 +2,7 @@ package com.rodrigofnobrega.demoparkapi;
 
 import com.rodrigofnobrega.demoparkapi.web.dto.customer.CustomerCreateDto;
 import com.rodrigofnobrega.demoparkapi.web.dto.customer.CustomerResponseDto;
+import com.rodrigofnobrega.demoparkapi.web.dto.pageable.PageableDto;
 import com.rodrigofnobrega.demoparkapi.web.exception.ErrorMessage;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -166,6 +167,56 @@ public class CustomerIT {
         ErrorMessage responseBody = testClient
                 .get()
                 .uri("/api/v1/customers/0")
+                .headers(JwtAuthentication.getHeaderAuthorization(testClient, "bia@email.com", "123456"))
+                .exchange()
+                .expectStatus().isForbidden()
+                .expectBody(ErrorMessage.class)
+                .returnResult().getResponseBody();
+
+        Assertions.assertThat(responseBody).isNotNull();
+        Assertions.assertThat(responseBody.getStatus()).isEqualTo(403);
+    }
+
+    @Test
+    public void findCustomer_WithPaginationByAdmin_ReturnCustomersWithStatus200() {
+        WebTestClient testClient = WebTestClient.bindToServer().baseUrl("http://127.0.0.1:" + port).build();
+
+        PageableDto responseBody = testClient
+                .get()
+                .uri("/api/v1/customers")
+                .headers(JwtAuthentication.getHeaderAuthorization(testClient, "ana@email.com", "123456"))
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(PageableDto.class)
+                .returnResult().getResponseBody();
+
+        Assertions.assertThat(responseBody).isNotNull();
+        Assertions.assertThat(responseBody.getContent().size()).isEqualTo(2);
+        Assertions.assertThat(responseBody.getNumber()).isEqualTo(0);
+        Assertions.assertThat(responseBody.getTotalPages()).isEqualTo(1);
+
+        responseBody = testClient
+                .get()
+                .uri("/api/v1/customers?size=1&page=1")
+                .headers(JwtAuthentication.getHeaderAuthorization(testClient, "ana@email.com", "123456"))
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(PageableDto.class)
+                .returnResult().getResponseBody();
+
+        Assertions.assertThat(responseBody).isNotNull();
+        Assertions.assertThat(responseBody.getContent().size()).isEqualTo(1);
+        Assertions.assertThat(responseBody.getNumber()).isEqualTo(1);
+        Assertions.assertThat(responseBody.getTotalPages()).isEqualTo(2);
+    }
+
+    @Test
+    public void findCustomer_WithPaginationByCustomer_ReturnErrorMessageWithStatus403() {
+        WebTestClient testClient = WebTestClient.bindToServer().baseUrl("http://127.0.0.1:" + port).build();
+
+        ErrorMessage responseBody = testClient
+                .get()
+                .uri("/api/v1/customers")
                 .headers(JwtAuthentication.getHeaderAuthorization(testClient, "bia@email.com", "123456"))
                 .exchange()
                 .expectStatus().isForbidden()

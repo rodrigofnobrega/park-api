@@ -226,4 +226,40 @@ public class CustomerIT {
         Assertions.assertThat(responseBody).isNotNull();
         Assertions.assertThat(responseBody.getStatus()).isEqualTo(403);
     }
+
+    @Test
+    public void findCustomer_WithCustomerTokenData_ReturnCustomerWithStatus200() {
+        WebTestClient testClient = WebTestClient.bindToServer().baseUrl("http://127.0.0.1:" + port).build();
+
+        CustomerResponseDto responseBody = testClient
+                .get()
+                .uri("/api/v1/customers/detalhes")
+                .headers(JwtAuthentication.getHeaderAuthorization(testClient, "bia@email.com", "123456"))
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(CustomerResponseDto.class)
+                .returnResult().getResponseBody();
+
+        Assertions.assertThat(responseBody).isNotNull();
+        Assertions.assertThat(responseBody.getCpf()).isEqualTo("00732469058");
+        Assertions.assertThat(responseBody.getName()).isEqualTo("Bianca Silva");
+        Assertions.assertThat(responseBody.getId()).isEqualTo(10);
+    }
+
+    @Test
+    public void findCustomer_WithAdminTokenData_ReturnErrorMessageWithStatus403() {
+        WebTestClient testClient = WebTestClient.bindToServer().baseUrl("http://127.0.0.1:" + port).build();
+
+        ErrorMessage responseBody = testClient
+                .get()
+                .uri("/api/v1/customers/detalhes")
+                .headers(JwtAuthentication.getHeaderAuthorization(testClient, "ana@email.com", "123456"))
+                .exchange()
+                .expectStatus().isForbidden()
+                .expectBody(ErrorMessage.class)
+                .returnResult().getResponseBody();
+
+        Assertions.assertThat(responseBody).isNotNull();
+        Assertions.assertThat(responseBody.getStatus()).isEqualTo(403);
+    }
 }

@@ -67,4 +67,14 @@ public class ApiExceptionHandler {
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(new ErrorMessage(request, HttpStatus.FORBIDDEN, exception.getMessage()));
     }
+
+    @ExceptionHandler(CodeUniqueViolationException.class)
+    public ResponseEntity<ErrorMessage> accessDeniedException(CodeUniqueViolationException exception,
+                                                              HttpServletRequest request) {
+        log.error("Api Error -", exception);
+        return ResponseEntity
+                .status(HttpStatus.FORBIDDEN)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(new ErrorMessage(request, HttpStatus.FORBIDDEN, exception.getMessage()));
+    }
 }

@@ -3,7 +3,7 @@ package com.rodrigofnobrega.demoparkapi.service;
 import com.rodrigofnobrega.demoparkapi.entity.ParkingSpaceEntity;
 import com.rodrigofnobrega.demoparkapi.exception.EntityNotFoundException;
 import com.rodrigofnobrega.demoparkapi.repository.ParkingSpaceRepository;
-import com.rodrigofnobrega.demoparkapi.web.exception.CodeUniqueViolationException;
+import com.rodrigofnobrega.demoparkapi.exception.CodeUniqueViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;

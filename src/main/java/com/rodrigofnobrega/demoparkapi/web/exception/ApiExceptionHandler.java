@@ -1,9 +1,6 @@
 package com.rodrigofnobrega.demoparkapi.web.exception;
 
-import com.rodrigofnobrega.demoparkapi.exception.CpfUniqueViolationException;
-import com.rodrigofnobrega.demoparkapi.exception.EntityNotFoundException;
-import com.rodrigofnobrega.demoparkapi.exception.PasswordInvalidException;
-import com.rodrigofnobrega.demoparkapi.exception.UsernameUniqueViolationException;
+import com.rodrigofnobrega.demoparkapi.exception.*;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -73,8 +70,8 @@ public class ApiExceptionHandler {
                                                               HttpServletRequest request) {
         log.error("Api Error -", exception);
         return ResponseEntity
-                .status(HttpStatus.FORBIDDEN)
+                .status(HttpStatus.CONFLICT)
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(new ErrorMessage(request, HttpStatus.FORBIDDEN, exception.getMessage()));
+                .body(new ErrorMessage(request, HttpStatus.CONFLICT, exception.getMessage()));
     }
 }

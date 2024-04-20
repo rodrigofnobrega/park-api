@@ -17,6 +17,6 @@ public class ParkingSpaceCreateDTO {
     @Size(min = 4, max = 4)
     private String code;
     @NotBlank
-    @Pattern(regexp = "LIVRE|OCUPADO")
+    @Pattern(regexp = "LIVRE|OCUPADA")
     private String status;
 }
